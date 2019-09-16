@@ -1,18 +1,26 @@
-let app = require("express")();
-let http = require("http").createServer(app);
-let io = require("socket.io")(http);
+const app = require("express")();
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
+const next = require("next");
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
+const dev = process.env.NODE_ENV !== "production";
+const nextApp = next({ dev });
+const nextHandler = nextApp.getRequestHandler();
+
+let port = 3000;
 
 io.on("connection", socket => {
   console.log("a user connected");
-  socket.on("chat message", msg => {
-    io.emit("chat message", msg);
-  });
+  // socket.on("chat message", msg => {
+  //   io.emit("chat message", msg);
+  // });
+  socket.emit("now", { message: "zeit" });
 });
 
-http.listen(4000, () => {
-  console.log("listening on *:4000");
+app.get("*", (req, res) => {
+  return nextHandler(req, res);
+});
+
+server.listen(port, () => {
+  console.log("listening on *:3000");
 });

@@ -1,0 +1,1 @@
+{"name":"socket-chat","version":"0.0.1","description":"virtual book club using socket.io","scripts":{"dev":"node server.js","build":"next dev","start":"node server.js"},"dependencies":{"express":"^4.17.1","next":"^9.0.5","react":"^16.9.0","react-dom":"^16.9.0","socket.io":"^2.2.0","socket.io-client":"^2.2.0"},"readme":"ERROR: No README data found!","_id":"socket-chat@0.0.1"}
