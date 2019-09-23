@@ -1,6 +1,6 @@
 const app = require("express")();
 const server = require("http").Server(app);
-const graphQLHTTP = reqire("express-graphql");
+const graphQLHTTP = require("express-graphql");
 const io = require("socket.io")(server);
 const next = require("next");
 
@@ -12,7 +12,7 @@ const nextHandler = nextApp.getRequestHandler();
 
 let port = 3000;
 
-app.use("/graphql", graphQLHTTP({ schema }));
+app.use("/graphql", graphQLHTTP({ schema, graphiql: true }));
 
 io.on("connection", socket => {
   console.log("a user connected");
