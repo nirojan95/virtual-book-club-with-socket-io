@@ -21,14 +21,17 @@ class Signup extends Component {
 
   signupHandler = async event => {
     event.preventDefault();
-    // let data = new FormData();
-    // data.append("username", this.state.username);
-    // data.append("password", this.state.password);
-    let body = JSON.stringify({
-      username: this.state.username,
-      password: this.state.password
+    let response = await fetch("/signupEndpoint", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: this.state.username,
+        password: this.state.password
+      })
     });
-    let response = await fetch("/signup", { method: "POST", body });
     let responseBody = await response.text();
     let parsedBody = JSON.parse(responseBody);
     console.log(parsedBody);
@@ -58,7 +61,7 @@ class Signup extends Component {
               type="password"
               name="password"
               placeholder="enter a password"
-              onChange={this.usernameHandler}
+              onChange={this.passwordHandler}
             />
             <input type="submit" />
           </form>

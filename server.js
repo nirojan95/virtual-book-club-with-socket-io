@@ -11,23 +11,20 @@ const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const nextHandler = nextApp.getRequestHandler();
 
-nextApp.prepare().then(() => {
-  app.get("*", (req, res) => {
-    return nextHandler(req, res);
-  });
-});
-
-const cookieParser = require("cookie-parser");
 const MongoClient = require("mongodb").MongoClient;
 const ObjectID = require("mongodb").ObjectID;
 
 let mongoURL = require("./config.js");
 let dbo = undefined;
 let url = mongoURL;
-url =
-  "mongodb+srv://alibay:decode@cluster0-qnbgf.mongodb.net/test?retryWrites=true&w=majority";
+// url =
+//   "mongodb+srv://alibay:decode@cluster0-qnbgf.mongodb.net/test?retryWrites=true&w=majority";
 
+const cookieParser = require("cookie-parser");
 app.use(cookieParser());
+
+const bodyParser = require("body-parser");
+app.use(bodyParser());
 
 MongoClient.connect(
   url,
@@ -42,6 +39,12 @@ MongoClient.connect(
   }
 );
 
+nextApp.prepare().then(() => {
+  app.get("*", (req, res) => {
+    return nextHandler(req, res);
+  });
+});
+
 // app.use("/graphql", graphQLHTTP({ schema, graphiql: true }));
 
 io.on("connection", socket => {
@@ -52,9 +55,11 @@ io.on("connection", socket => {
   socket.emit("now", { message: "zeit" });
 });
 
-app.post("/signup", (req, res) => {
-  let username = req.body.username;
-  let password = req.body.password;
+app.post("/signupEndpoint", (req, res) => {
+  console.log(req.body);
+  let body = req.body;
+  let username = body.username;
+  let password = body.password;
   dbo.collection("users").findOne({ users: username }, async (err, user) => {
     if (err) {
       console.log("Error at signup", err);
