@@ -1,7 +1,7 @@
 {
   "devFiles": [
-    "static/development/dll/dll_9e2a3f9838424feeb96c.js",
-    "static/development/dll/dll_9e2a3f9838424feeb96c.js.map"
+    "static/development/dll/dll_17cf9021b82dc5b75631.js",
+    "static/development/dll/dll_17cf9021b82dc5b75631.js.map"
   ],
   "pages": {
     "/": [
@@ -16,15 +16,11 @@
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ],
-    "/chat": [
+    "/about": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ],
     "/index": [
-      "static/runtime/webpack.js",
-      "static/runtime/main.js"
-    ],
-    "/next/dist/pages/_error": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ]

@@ -15,6 +15,9 @@ const Header = () => (
     <Link href="/chat">
       <a style={linkStyle}>Chat</a>
     </Link>
+    <Link href="/signup">
+      <a style={linkStyle}>Signup</a>
+    </Link>
   </div>
 );
 
