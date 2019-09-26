@@ -1,16 +1,14 @@
 const graphql = require("graphql");
-const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLSchema } = graphql;
+const {
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLID,
+  GraphQLSchema,
+  GraphQLList,
+  GraphQLNonNull
+} = graphql;
 const _ = require("lodash");
-// const MongoClient = require("mongodb").MongoClient;
-// const ObjectId = require("mongodb").ObjectID;
-// const sha1 = require("sha1");
-
-// let dbo = undefined;
-// let url =
-//   "mongodb+srv://chuckedup:JAbSNA29hPYv8na@cluster0-jxjpp.mongodb.net/test?retryWrites=true&w=majority";
-// MongoClient.connect(url, { useNewUrlParser: true }, (err, db) => {
-//   dbo = db.db("LearnFrench");
-// });
+const User = require("../models/user.js");
 
 let users = [
   { username: "Bob", password: "123456", id: "1" },
@@ -28,17 +26,42 @@ const UserType = new GraphQLObjectType({
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
-  fields: () => ({
+  fields: {
     user: {
       type: UserType,
-      args: { id: { type: GraphQLID } },
+      args: { id: { type: GraphQLID }, username: { type: GraphQLString } },
       resolve(parent, args) {
-        /*code to get data from db*/
-
-        return _.find(users, { id: args.id });
+        console.log(args.username);
+        return User.findOne({ username: args.username });
+      }
+    },
+    users: {
+      type: new GraphQLList(UserType),
+      resolve(parent, args) {
+        return User.find({});
       }
     }
-  })
+  }
 });
 
-module.exports = new GraphQLSchema({ query: RootQuery });
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    addUser: {
+      type: UserType,
+      args: {
+        username: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        let user = new User({
+          username: args.username,
+          password: args.password
+        });
+        return user.save();
+      }
+    }
+  }
+});
+
+module.exports = new GraphQLSchema({ query: RootQuery, mutation: Mutation });

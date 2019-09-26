@@ -1,43 +1,44 @@
 const app = require("express")();
 const server = require("http").Server(app);
-// const graphQLHTTP = require("express-graphql");
 const io = require("socket.io")(server);
 const next = require("next");
-let port = 3000;
 
-// const schema = require("./schema/schema");
+// const MongoClient = require("mongodb").MongoClient;
+// const ObjectID = require("mongodb").ObjectID;
+
+const graphQLHTTP = require("express-graphql");
+const schema = require("./schema/schema");
 
 const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const nextHandler = nextApp.getRequestHandler();
 
-const MongoClient = require("mongodb").MongoClient;
-const ObjectID = require("mongodb").ObjectID;
+const mongoose = require("mongoose");
+let url = require("./config.js");
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 
-let mongoURL = require("./config.js");
-let dbo = undefined;
-let url = mongoURL;
-// url =
-//   "mongodb+srv://alibay:decode@cluster0-qnbgf.mongodb.net/test?retryWrites=true&w=majority";
+mongoose.connection.once("open", () => {
+  console.log("connected to database");
+});
 
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
-
 const bodyParser = require("body-parser");
 app.use(bodyParser());
 
-MongoClient.connect(
-  url,
-  { useNewUrlParser: true, useUnifiedTopology: true },
-  (err, db) => {
-    if (err) {
-      console.log("Error connecting to MongoDB", err);
-      return;
-    }
-    dbo = db.db("virtual-book-club");
-    console.log("connected");
-  }
-);
+// let dbo = undefined;
+// MongoClient.connect(
+//   url,
+//   { useNewUrlParser: true, useUnifiedTopology: true },
+//   (err, db) => {
+//     if (err) {
+//       console.log("Error connecting to MongoDB", err);
+//       return;
+//     }
+//     dbo = db.db("virtual-book-club");
+//     console.log("connected");
+//   }
+// );
 
 nextApp.prepare().then(() => {
   app.get("*", (req, res) => {
@@ -45,7 +46,7 @@ nextApp.prepare().then(() => {
   });
 });
 
-// app.use("/graphql", graphQLHTTP({ schema, graphiql: true }));
+app.use("/graphql", graphQLHTTP({ schema, graphiql: true }));
 
 io.on("connection", socket => {
   console.log("a user connected");
@@ -112,6 +113,8 @@ app.post("/signupEndpoint", (req, res) => {
 let generateId = () => {
   return "" + Math.floor(Math.random() * 1000000000);
 };
+
+let port = 3000;
 
 server.listen(port, () => {
   console.log("listening on *:3000");
